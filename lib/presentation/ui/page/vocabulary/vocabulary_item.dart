@@ -1,7 +1,10 @@
+import 'package:english_app/models/vocabulary_model.dart';
 import 'package:flutter/material.dart';
 
 class VocabularyItem extends StatefulWidget {
-  const VocabularyItem({super.key});
+  const VocabularyItem({super.key, required this.vocabulary});
+
+  final VocabularyModel vocabulary;
 
   @override
   State<VocabularyItem> createState() => _VocabularyItemState();
@@ -9,55 +12,7 @@ class VocabularyItem extends StatefulWidget {
 
 class _VocabularyItemState extends State<VocabularyItem> {
   bool _isExpanded = false;
-
   static const _purple = Color(0xFF7C3AED);
-  static const _border = Color(0xFFE5D5FA);
-  static const _text = Color(0xFF26163F);
-
-  static const _words = [
-    (
-    word: 'Product',
-    type: 'N',
-    ipa: '/ˈprɒd.ʌkt/',
-    meaning: 'Sản phẩm',
-    ),
-    (
-    word: 'Produce',
-    type: 'V',
-    ipa: '/prəˈdjuːs/',
-    meaning: 'Sản xuất, tạo ra',
-    ),
-    (
-    word: 'Produce',
-    type: 'N',
-    ipa: '/ˈprɒd.juːs/',
-    meaning: 'Nông sản, rau củ quả',
-    ),
-    (
-    word: 'Production',
-    type: 'N, V',
-    ipa: '/prəˈdʌk.ʃən/',
-    meaning: 'Sự sản xuất, quá trình sản xuất',
-    ),
-    (
-    word: 'Producer',
-    type: 'N',
-    ipa: '/prəˈdjuː.sər/',
-    meaning: 'Nhà sản xuất',
-    ),
-    (
-    word: 'Productive',
-    type: 'Adj',
-    ipa: '/prəˈdʌk.tɪv/',
-    meaning: 'Có năng suất, hiệu quả',
-    ),
-    (
-    word: 'Productivity',
-    type: 'N',
-    ipa: '/ˌprɒd.ʌkˈtɪv.ə.ti/',
-    meaning: 'Năng suất',
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +33,7 @@ class _VocabularyItemState extends State<VocabularyItem> {
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: _border),
+          side: const BorderSide(color: Color(0xFFE5D5FA)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -93,9 +48,9 @@ class _VocabularyItemState extends State<VocabularyItem> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    for (var i = 0; i < _words.length; i++) ...[
+                    for (var i = 0; i < widget.vocabulary.words.length; i++) ...[
                       _buildWord(i),
-                      if (i < _words.length - 1)
+                      if (i < widget.vocabulary.words.length - 1)
                         const Divider(
                           height: 1,
                           thickness: 1,
@@ -131,17 +86,16 @@ class _VocabularyItemState extends State<VocabularyItem> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
+              spacing: 10,
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
-                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE6D5FC),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    '01',
+                  child: Text(
+                    widget.vocabulary.id.toString().padLeft(2, '0'),
                     style: TextStyle(
                       color: _purple,
                       fontSize: 18,
@@ -149,37 +103,22 @@ class _VocabularyItemState extends State<VocabularyItem> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Product',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: _text,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        '${_words.length} mục từ',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF857393),
-                        ),
-                      ),
-                    ],
+                Text(
+                  widget.vocabulary.title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF26163F),
                   ),
                 ),
+                const Spacer(),
                 AnimatedRotation(
                   turns: _isExpanded ? 0.5 : 0,
                   duration: const Duration(milliseconds: 250),
                   child: const Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: _purple,
-                    size: 28,
+                    size: 30,
                   ),
                 ),
               ],
@@ -191,112 +130,51 @@ class _VocabularyItemState extends State<VocabularyItem> {
   }
 
   Widget _buildWord(int index) {
-    final item = _words[index];
+    final item = widget.vocabulary.words[index];
+    final wordStyle = const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF26163F));
+    final detailStyle = const TextStyle(fontSize: 15, color: Color(0xFF484052));
+    final posStyle = const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF3264B5));
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      padding: const EdgeInsets.symmetric(vertical: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 5,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 6,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      item.word,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: _text,
-                      ),
-                    ),
-                    _buildTypeBadge(item.type),
-                  ],
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  item.ipa,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    height: 1.4,
-                    color: Color(0xFF8A8096),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  item.meaning,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    height: 1.45,
-                    color: Color(0xFF484052),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          // UI only: chưa tích hợp chức năng phát âm.
-          Tooltip(
-            message: 'Nghe phát âm — chưa tích hợp',
-            child: Container(
-              width: 48,
-              height: 48,
-              alignment: Alignment.center,
-              child: Container(
-                width: 36,
-                height: 36,
+          Row(
+            spacing: 10,
+            children: [
+              Text(
+                item.word,
+                style: wordStyle,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFAF7FF),
-                  borderRadius: BorderRadius.circular(11),
-                  border: Border.all(color: _border),
+                  color: Color(0xFFE5EEFF),
+                  borderRadius: BorderRadius.circular(7),
                 ),
-                child: const Icon(
-                  Icons.volume_up_rounded,
-                  color: _purple,
-                  size: 20,
+                child: Text(
+                  item.pos,
+                  style: posStyle,
                 ),
               ),
-            ),
+              const Spacer(),
+              Text(
+                item.phonetic,
+                style: detailStyle,
+              ),
+            ],
+          ),
+          Text(
+            item.definition,
+            style: detailStyle,
+          ),
+          Text(
+            item.detail,
+            style: detailStyle,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTypeBadge(String type) {
-    final (background, foreground) = switch (type) {
-      'Verb (v)' => (
-      const Color(0xFFFFE9DA),
-      const Color(0xFFB65320),
-      ),
-      'Adjective (adj)' => (
-      const Color(0xFFDDF6EB),
-      const Color(0xFF187451),
-      ),
-      _ => (
-      const Color(0xFFE5EEFF),
-      const Color(0xFF3264B5),
-      ),
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(7),
-      ),
-      child: Text(
-        type,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: foreground,
-        ),
       ),
     );
   }
