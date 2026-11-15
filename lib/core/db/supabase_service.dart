@@ -1,4 +1,5 @@
 import 'package:english_app/core/constants/supabase_const.dart';
+import 'package:english_app/models/note_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseService {
@@ -28,5 +29,13 @@ class SupabaseService {
     } catch (e) {
       return null;
     }
+  }
+
+  Future<List<NoteModel>> getNotes() async {
+    final rows = await _client
+        .from('notes')
+        .select('id,title,notes:detail')
+        .order('id', ascending: true);
+    return rows.map(NoteModel.fromJson).toList();
   }
 }
